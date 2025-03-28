@@ -274,13 +274,8 @@ handcrafted-haven/
 
 ## Getting Started
 
-To bootstrap the Next.js application for Handcrafted Haven, use the following command:
+clone this repository
 
-```bash
-npx create-next-app@latest handcrafted-haven --typescript
-```
-
-This will set up a new Next.js project with TypeScript support. After the project is created, you can start implementing the features according to the architecture and plan outlined above.
 
 To run the development server:
 
