@@ -276,7 +276,6 @@ handcrafted-haven/
 
 clone this repository
 
-
 To run the development server:
 
 ```bash
