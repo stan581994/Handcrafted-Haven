@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Navbar: React.FC = () => {
@@ -7,7 +8,14 @@ const Navbar: React.FC = () => {
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
         <Link href="/" className="navbar-brand">
-          Handcrafted Haven
+          <Image
+            src="/logo-no-background.png"
+            alt="Handcrafted Haven Logo"
+            width={180}
+            height={40}
+            style={{ objectFit: "contain" }}
+            priority
+          />
         </Link>
         <button
           className="navbar-toggler"

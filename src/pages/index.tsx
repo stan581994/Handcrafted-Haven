@@ -1,7 +1,9 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "../components/Navbar";
+import Carousel from "../components/Carousel";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Home: React.FC = () => {
@@ -40,9 +42,7 @@ const Home: React.FC = () => {
               </div>
             </div>
             <div className="col-md-6">
-              <div className="bg-light p-5 text-center rounded">
-                <p className="mb-0">Featured Product Image</p>
-              </div>
+              <Carousel />
             </div>
           </div>
 
@@ -52,6 +52,17 @@ const Home: React.FC = () => {
             </div>
             <div className="col-md-4 mb-4">
               <div className="card h-100">
+                <div
+                  className="card-img-top position-relative"
+                  style={{ height: "200px" }}
+                >
+                  <Image
+                    src="/jewerly.jpg"
+                    alt="Jewelry category"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
                 <div className="card-body text-center">
                   <h5 className="card-title">Jewelry</h5>
                   <p className="card-text">
@@ -68,6 +79,17 @@ const Home: React.FC = () => {
             </div>
             <div className="col-md-4 mb-4">
               <div className="card h-100">
+                <div
+                  className="card-img-top position-relative"
+                  style={{ height: "200px" }}
+                >
+                  <Image
+                    src="/decor.jpg"
+                    alt="Home Decor category"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
                 <div className="card-body text-center">
                   <h5 className="card-title">Home Decor</h5>
                   <p className="card-text">
@@ -84,6 +106,17 @@ const Home: React.FC = () => {
             </div>
             <div className="col-md-4 mb-4">
               <div className="card h-100">
+                <div
+                  className="card-img-top position-relative"
+                  style={{ height: "200px" }}
+                >
+                  <Image
+                    src="/clothing.jpg"
+                    alt="Clothing category"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
                 <div className="card-body text-center">
                   <h5 className="card-title">Clothing</h5>
                   <p className="card-text">
