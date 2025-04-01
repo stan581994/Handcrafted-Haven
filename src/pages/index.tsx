@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Carousel from "../components/Carousel";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -36,7 +37,10 @@ const Home: React.FC = () => {
                 <Link href="/shop/products" className="btn btn-primary me-2">
                   Browse Products
                 </Link>
-                <Link href="/sellers" className="btn btn-outline-secondary">
+                <Link
+                  href="/artisans/pages"
+                  className="btn btn-outline-secondary"
+                >
                   Meet Our Artisans
                 </Link>
               </div>
@@ -134,6 +138,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

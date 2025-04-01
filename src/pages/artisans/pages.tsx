@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import Link from "next/link";
 
 // Define the Artisan type
@@ -12,35 +13,10 @@ interface Artisan {
   image_url: string | null;
 }
 
-const SellersPage: React.FC = () => {
+const ArtisansPage: React.FC = () => {
   const [artisans, setArtisans] = useState<Artisan[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [setupStatus, setSetupStatus] = useState<string | null>(null);
-
-  // Function to set up the artisans table and data
-  const setupArtisansTable = async () => {
-    try {
-      setSetupStatus("Setting up artisans table...");
-      const response = await fetch("/api/setup-artisans");
-      const data = await response.json();
-
-      if (data.success) {
-        setSetupStatus(data.message);
-        // After setup, fetch the artisans data
-        fetchArtisans();
-      } else {
-        setSetupStatus(`Setup failed: ${data.message}`);
-        setError(data.error || "Unknown error");
-      }
-    } catch (err) {
-      setSetupStatus("Setup failed");
-      setError(
-        err instanceof Error ? err.message : "An error occurred during setup"
-      );
-      setLoading(false);
-    }
-  };
 
   // Function to fetch artisans data
   const fetchArtisans = async () => {
@@ -63,8 +39,9 @@ const SellersPage: React.FC = () => {
 
   // Effect to run on component mount
   useEffect(() => {
-    setupArtisansTable();
+    fetchArtisans();
   }, []);
+
   return (
     <div>
       <Head>
@@ -81,13 +58,6 @@ const SellersPage: React.FC = () => {
         <p>
           Discover the talented creators behind our unique handcrafted products.
         </p>
-
-        {/* Error message */}
-        {error && (
-          <div className="alert alert-danger mb-4">
-            <strong>Error:</strong> {error}
-          </div>
-        )}
 
         {/* Loading indicator */}
         {loading ? (
@@ -147,18 +117,19 @@ const SellersPage: React.FC = () => {
                 <p>No artisans found. Please check the database connection.</p>
                 <button
                   className="btn btn-primary"
-                  onClick={setupArtisansTable}
+                  onClick={fetchArtisans}
                   disabled={loading}
                 >
-                  Retry Setup
+                  Retry Loading
                 </button>
               </div>
             )}
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };
 
-export default SellersPage;
+export default ArtisansPage;
