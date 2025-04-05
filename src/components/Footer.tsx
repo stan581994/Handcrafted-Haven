@@ -9,11 +9,11 @@ const Footer: React.FC = () => {
         <div className="row">
           <div className="col-md-4 mb-4 mb-md-0">
             <h5>Handcrafted Haven</h5>
-            <p className="text-muted">
+            <p className="text-light">
               Connecting artisans with customers who appreciate handcrafted
               quality.
             </p>
-            <p className="text-muted">
+            <p className="text-light">
               &copy; {new Date().getFullYear()} Handcrafted Haven. All rights
               reserved.
             </p>
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
               <li className="mb-2">
                 <Link
                   href="/shop/products"
-                  className="text-decoration-none text-muted"
+                  className="text-decoration-none text-light"
                 >
                   All Products
                 </Link>
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
               <li className="mb-2">
                 <Link
                   href="/shop/categories"
-                  className="text-decoration-none text-muted"
+                  className="text-decoration-none text-light"
                 >
                   Categories
                 </Link>
@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
               <li className="mb-2">
                 <Link
                   href="/artisans/pages"
-                  className="text-decoration-none text-muted"
+                  className="text-decoration-none text-light"
                 >
                   Artisans
                 </Link>
@@ -53,17 +53,17 @@ const Footer: React.FC = () => {
             <h5>Information</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <Link href="/about" className="text-decoration-none text-muted">
+                <Link href="/about" className="text-decoration-none text-light">
                   About Us
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="#" className="text-decoration-none text-muted">
+                <Link href="#" className="text-decoration-none text-light">
                   Privacy Policy
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="#" className="text-decoration-none text-muted">
+                <Link href="#" className="text-decoration-none text-light">
                   Terms & Conditions
                 </Link>
               </li>
@@ -76,27 +76,27 @@ const Footer: React.FC = () => {
               <li className="mb-2">
                 <a
                   href="mailto:info@handcraftedhaven.com"
-                  className="text-decoration-none text-muted"
+                  className="text-decoration-none text-light"
                 >
-                  Email Us
+                  customer_service@handcraftedhaven.com
                 </a>
               </li>
               <li className="mb-2">
                 <a
                   href="tel:+1234567890"
-                  className="text-decoration-none text-muted"
+                  className="text-decoration-none text-light"
                 >
-                  (123) 456-7890
+                  (456) 124-9985
                 </a>
               </li>
               <li className="mb-2 d-flex gap-3">
-                <a href="#" className="text-decoration-none text-muted">
+                <a href="#" className="text-decoration-none text-light">
                   <i className="bi bi-facebook"></i>
                 </a>
-                <a href="#" className="text-decoration-none text-muted">
+                <a href="#" className="text-decoration-none text-light">
                   <i className="bi bi-instagram"></i>
                 </a>
-                <a href="#" className="text-decoration-none text-muted">
+                <a href="#" className="text-decoration-none text-light">
                   <i className="bi bi-twitter"></i>
                 </a>
               </li>

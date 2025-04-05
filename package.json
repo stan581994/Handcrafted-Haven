@@ -24,7 +24,8 @@
     "dotenv": "^16.4.7",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-hot-toast": "^2.5.2"
   },
   "devDependencies": {
     "@types/node": "^16.11.7",

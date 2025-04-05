@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { addToCart } from "../../utils/cart";
+import { toast } from "react-hot-toast";
 
 // Define types
 interface Product {
@@ -240,9 +242,27 @@ const ProductsPage: React.FC = () => {
                               {product.artisan_name}
                             </Link>
                           </p>
-                          <button className="btn btn-sm btn-outline-primary">
-                            View Details
-                          </button>
+                          <div className="d-flex gap-2">
+                            <button className="btn btn-sm btn-outline-primary">
+                              View Details
+                            </button>
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                addToCart({
+                                  id: product.id,
+                                  name: product.name,
+                                  price: product.price,
+                                  image_url: product.image_url,
+                                  artisan_name: product.artisan_name,
+                                });
+                                toast.success(`${product.name} added to cart!`);
+                              }}
+                            >
+                              Add to Cart
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

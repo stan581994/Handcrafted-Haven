@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { getCartItemCount } from "../utils/cart";
 
 const Navbar: React.FC = () => {
+  const [cartCount, setCartCount] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setCartCount(getCartItemCount());
+
+    // Update cart count when local storage changes
+    const handleStorageChange = () => {
+      setCartCount(getCartItemCount());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Also check periodically for changes
+    const interval = setInterval(() => {
+      setCartCount(getCartItemCount());
+    }, 2000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -63,8 +88,13 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/shop/cart" className="nav-link">
+              <Link href="/shop/my-cart" className="nav-link">
                 <i className="bi bi-cart"></i> Cart
+                {isClient && cartCount > 0 && (
+                  <span className="badge rounded-pill bg-danger ms-1">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </li>
           </ul>
