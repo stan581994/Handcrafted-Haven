@@ -3,8 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { getCartItemCount } from "../utils/cart";
+import { useSession, signOut } from "next-auth/react";
 
 const Navbar: React.FC = () => {
+  const { data: session } = useSession();
   const [cartCount, setCartCount] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
@@ -29,6 +31,11 @@ const Navbar: React.FC = () => {
       clearInterval(interval);
     };
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    window.location.href = "/";
+  };
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -82,11 +89,46 @@ const Navbar: React.FC = () => {
             </li>
           </ul>
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link href="/auth/login" className="nav-link">
-                Login / Register
-              </Link>
-            </li>
+            {session ? (
+              <>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {session.user.name || session.user.email}
+                  </a>
+                  <ul
+                    className="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="navbarDropdown"
+                  >
+                    <li>
+                      <Link href="/shop/orders" className="dropdown-item">
+                        My Orders
+                      </Link>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <button className="dropdown-item" onClick={handleSignOut}>
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item">
+                <Link href="/auth/login" className="nav-link">
+                  Login / Register
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <Link href="/shop/my-cart" className="nav-link">
                 <i className="bi bi-cart"></i> Cart

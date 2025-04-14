@@ -13,9 +13,11 @@ import {
   CartItem,
 } from "../../utils/cart";
 import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 const CartPage: React.FC = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isClient, setIsClient] = useState(false);
 
@@ -70,10 +72,18 @@ const CartPage: React.FC = () => {
 
   // Proceed to checkout
   const handleCheckout = () => {
-    // This would typically redirect to a checkout page or process
-    toast.success("Proceeding to checkout...");
-    // For now, just show a success message
-    alert("Checkout functionality would be implemented here!");
+    if (session) {
+      // User is logged in, redirect to checkout page
+      toast.success("Proceeding to checkout...");
+      router.push("/shop/checkout");
+    } else {
+      // User is not logged in, redirect to login page with callback URL
+      toast.success("Please log in to continue with checkout");
+      router.push({
+        pathname: "/auth/login",
+        query: { callbackUrl: "/shop/checkout" },
+      });
+    }
   };
 
   return (
