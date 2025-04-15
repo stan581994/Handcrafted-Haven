@@ -222,6 +222,9 @@ handcrafted-haven/
 │   ├── context/             # React context providers
 │   ├── types/               # TypeScript type definitions
 │   └── styles/              # Global styles
+│       ├── globals.css      # Global CSS styles
+│       ├── bootstrap.min.css # Bootstrap framework CSS
+│       └── modal.css        # Modal component styles (imported in _app.tsx)
 ├── .env.local               # Environment variables
 ├── .gitignore               # Git ignore file
 ├── next.config.js           # Next.js configuration
@@ -265,6 +268,20 @@ handcrafted-haven/
    - Set up Vercel deployment
    - Configure environment variables
    - Set up continuous integration/deployment
+
+## CSS Architecture
+
+In this Next.js application, we follow the framework's best practices for CSS imports:
+
+1. **Global CSS** - All global CSS files are imported only in the custom App component (`src/pages/_app.tsx`). This includes:
+
+   - `bootstrap.min.css` - Bootstrap framework styles
+   - `globals.css` - Application-wide styles
+   - `modal.css` - Modal component styles
+
+2. **Component-Level CSS** - For component-specific styling, we use CSS Modules (files with `.module.css` extension) which are imported directly in the component files.
+
+This approach follows Next.js recommendations to avoid conflicts between global styles and ensures proper loading of CSS in both server-side rendering and client-side navigation.
 
 ## Project Limitations
 

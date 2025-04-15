@@ -21,7 +21,8 @@ nextjs-bootstrap-app/
 │   │   └── Navbar.tsx       # Navigation bar component
 │   ├── styles/              # Stylesheets
 │   │   ├── globals.css       # Global styles
-│   │   └── bootstrap.min.css  # Bootstrap CSS
+│   │   ├── bootstrap.min.css  # Bootstrap CSS
+│   │   └── modal.css         # Modal component styles (imported in _app.tsx)
 │   └── utils/               # Utility functions
 │       └── index.ts         # Utility functions
 ├── .gitignore               # Git ignore file
