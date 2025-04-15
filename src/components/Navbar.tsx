@@ -111,6 +111,13 @@ const Navbar: React.FC = () => {
                         My Orders
                       </Link>
                     </li>
+                    {(session.user as any).role === "admin" && (
+                      <li>
+                        <Link href="/admin/dashboard" className="dropdown-item">
+                          Admin Dashboard
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <hr className="dropdown-divider" />
                     </li>

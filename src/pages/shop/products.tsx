@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { addToCart } from "../../utils/cart";
 import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 // Define types
 interface Product {
@@ -31,6 +32,7 @@ interface Category {
 
 const ProductsPage: React.FC = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const { artisan, category } = router.query;
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -40,6 +42,22 @@ const ProductsPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<number | null>(
     category ? Number(category) : null
   );
+
+  // Check if user is admin
+  const isAdmin = (session?.user as any)?.role === "admin";
+
+  // State for product modal
+  const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    price: 0,
+    image_url: "",
+    stock_quantity: 0,
+    category_id: 1,
+    artisan_id: 1,
+  });
 
   // Function to fetch products
   const fetchProducts = async () => {
@@ -108,6 +126,84 @@ const ProductsPage: React.FC = () => {
     window.history.pushState({}, "", newUrl);
   };
 
+  // Handle form input changes
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]:
+        name === "price" ||
+        name === "stock_quantity" ||
+        name === "category_id" ||
+        name === "artisan_id"
+          ? Number(value)
+          : value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const url = editingProduct
+        ? `/api/products?id=${editingProduct.id}`
+        : "/api/products";
+
+      const method = editingProduct ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success(
+          editingProduct
+            ? "Product updated successfully"
+            : "Product added successfully"
+        );
+        setShowModal(false);
+        fetchProducts(); // Refresh the product list
+      } else {
+        toast.error(result.message || "An error occurred");
+      }
+    } catch (error) {
+      toast.error("Failed to save product");
+      console.error("Error saving product:", error);
+    }
+  };
+
+  // Handle product deletion
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      const response = await fetch(`/api/products?id=${productId}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Product deleted successfully");
+        fetchProducts(); // Refresh the product list
+      } else {
+        toast.error(result.message || "An error occurred");
+      }
+    } catch (error) {
+      toast.error("Failed to delete product");
+      console.error("Error deleting product:", error);
+    }
+  };
+
   // Format price
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -128,7 +224,29 @@ const ProductsPage: React.FC = () => {
       </Head>
       <Navbar />
       <main className="container mt-5">
-        <h1>Handcrafted Products</h1>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h1>Handcrafted Products</h1>
+          {isAdmin && (
+            <button
+              className="btn btn-success"
+              onClick={() => {
+                setEditingProduct(null);
+                setFormData({
+                  name: "",
+                  description: "",
+                  price: 0,
+                  image_url: "",
+                  stock_quantity: 0,
+                  category_id: categories[0]?.id || 1,
+                  artisan_id: 1,
+                });
+                setShowModal(true);
+              }}
+            >
+              <i className="bi bi-plus-circle me-2"></i> Add New Product
+            </button>
+          )}
+        </div>
 
         {artisan && (
           <div className="alert alert-info mb-4">
@@ -242,7 +360,7 @@ const ProductsPage: React.FC = () => {
                               {product.artisan_name}
                             </Link>
                           </p>
-                          <div className="d-flex gap-2">
+                          <div className="d-flex gap-2 flex-wrap">
                             <button className="btn btn-sm btn-outline-primary">
                               View Details
                             </button>
@@ -262,6 +380,43 @@ const ProductsPage: React.FC = () => {
                             >
                               Add to Cart
                             </button>
+
+                            {isAdmin && (
+                              <>
+                                <button
+                                  className="btn btn-sm btn-warning"
+                                  onClick={() => {
+                                    setEditingProduct(product);
+                                    setFormData({
+                                      name: product.name,
+                                      description: product.description,
+                                      price: product.price,
+                                      image_url: product.image_url || "",
+                                      stock_quantity: product.stock_quantity,
+                                      category_id: product.category_id,
+                                      artisan_id: product.artisan_id,
+                                    });
+                                    setShowModal(true);
+                                  }}
+                                >
+                                  <i className="bi bi-pencil me-1"></i> Edit
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => {
+                                    if (
+                                      window.confirm(
+                                        `Are you sure you want to delete "${product.name}"?`
+                                      )
+                                    ) {
+                                      handleDeleteProduct(product.id);
+                                    }
+                                  }}
+                                >
+                                  <i className="bi bi-trash me-1"></i> Delete
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -274,6 +429,164 @@ const ProductsPage: React.FC = () => {
         )}
       </main>
       <Footer />
+
+      {/* Product Modal */}
+      {showModal && (
+        <div className="modal-wrapper">
+          <div className="modal">
+            <div className="modal-dialog modal-lg">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    {editingProduct ? "Edit Product" : "Add New Product"}
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowModal(false)}
+                  ></button>
+                </div>
+                <form onSubmit={handleSubmit}>
+                  <div className="modal-body">
+                    <div className="mb-3">
+                      <label htmlFor="name" className="form-label">
+                        Product Name
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="description" className="form-label">
+                        Description
+                      </label>
+                      <textarea
+                        className="form-control"
+                        id="description"
+                        name="description"
+                        rows={3}
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        required
+                      ></textarea>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="price" className="form-label">
+                          Price ($)
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="price"
+                          name="price"
+                          min="0"
+                          step="0.01"
+                          value={formData.price}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="stock_quantity" className="form-label">
+                          Stock Quantity
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="stock_quantity"
+                          name="stock_quantity"
+                          min="0"
+                          value={formData.stock_quantity}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="image_url" className="form-label">
+                        Image URL
+                      </label>
+                      <input
+                        type="url"
+                        className="form-control"
+                        id="image_url"
+                        name="image_url"
+                        value={formData.image_url}
+                        onChange={handleInputChange}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                      <small className="text-muted">
+                        Leave empty if no image is available
+                      </small>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="category_id" className="form-label">
+                          Category
+                        </label>
+                        <select
+                          className="form-select"
+                          id="category_id"
+                          name="category_id"
+                          value={formData.category_id}
+                          onChange={handleInputChange}
+                          required
+                        >
+                          {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="artisan_id" className="form-label">
+                          Artisan ID
+                        </label>
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="artisan_id"
+                          name="artisan_id"
+                          min="1"
+                          value={formData.artisan_id}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      {editingProduct ? "Update Product" : "Add Product"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

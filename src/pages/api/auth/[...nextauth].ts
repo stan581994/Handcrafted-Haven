@@ -58,24 +58,30 @@ export default NextAuth({
           return null;
         }
 
+        // Cast to any to include the role property
         return {
           id: user.id,
           name: user.name,
           email: user.email,
-        };
+          role: user.role,
+        } as any;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        // Cast to any to include custom properties
+        (token as any).id = user.id;
+        (token as any).role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string;
+        // Cast to any to include custom properties
+        (session.user as any).id = (token as any).id;
+        (session.user as any).role = (token as any).role;
       }
       return session;
     },
